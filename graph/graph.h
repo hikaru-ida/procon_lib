@@ -9,6 +9,13 @@ void dijkstra(std::vector< std::vector<int> > & array, int s);
 
 /* ワーシャるフロイド
  * 計算量 O(n^3)
+ *
+ * 引数
+ * array: 隣接行列
+ *    array[u][v]は辺e=(u, v)のコスト（存在しない場合はINF.
+ *    ただしd[i][i]=0とする。）
+ * V: 頂点の数
+ *
  */
 void warshall_floyd(std::vector< std::vector<int> > & array, int V) {
   for(int k=0;k<V;k++)
@@ -17,6 +24,13 @@ void warshall_floyd(std::vector< std::vector<int> > & array, int V) {
      array[i][j] = std::min(array[i][j], array[i][k]+array[k][j]);
 }
 
+
+/* ダイクストラ
+ * 計算量 O(|E|log|V|)
+ *
+ * 引数
+ * cosdd
+ */
 void dijkstra(std::vector< std::vector<int> > & cost, std::vector<int> & d, bool used[], int s, int V) {
   for(int i=0;i<V;i++) d[i] = INF;
   for(int i=0;i<V;i++) used[i] = false;
@@ -35,35 +49,31 @@ void dijkstra(std::vector< std::vector<int> > & cost, std::vector<int> & d, bool
   }
 }
 
-int main() {
-  int n, m;
-  std::cin >> n >> m;
-  std::vector< std::vector<int> > v;
-  v = std::vector< std::vector<int> >(n, std::vector<int>(n, 0));
 
-  for(int i=0;i<n;i++) {
-    for(int j=0;j<n;j++) {
-      if(i!=j) v[i][j] = INF;
+/* ベルマンフォード
+ *
+ * 計算量 O(|E||V|)
+ */
+struct edge {int from, to, cost;};
+void bellman_ford(std::vector<edge> es, std::vector<int>d, int E, int V, int s) {
+  for(int i=0;i<V;i++) d[i] = INF;
+  d[s] = 0;
+  while(true) {
+    bool update = false;
+    for(int i=0;i<E;i++) {
+      edge e = es[i];
+      if(d[e.from] != INF && d[e.to] > d[e.from] + e.cost) {
+        d[e.to] = d[e.from] + e.cost;
+        update = true;
+      }
     }
+    if(!update) break;
   }
-  for(int i=0;i<m;i++) {
-    int a, b, t;
-    std::cin >> a >> b >> t;
-    a--; b--;
-    v[a][b] = t;
-    v[b][a] = t;
-  }
-  warshall_floyd(v, n);
-  long long ans = INF;
-  for(int i=0;i<n;i++) {
-    int mx = 0;
-    for(int j=0;j<n;j++) {
-      mx = std::max(mx, v[i][j]);
-    }
-    ans = std::min<long long>(ans, mx);
-  }
-
-  std::cout << ans << std::endl;
-  return 0;
-
 }
+
+/* sample
+ */
+void hello(){
+  std::cout << "hello" << std::endl;
+}
+
