@@ -7,7 +7,7 @@ const static long long INF = 1000000000;
 void warshall_floyd(std::vector< std::vector<int> > & array, int V);
 void dijkstra(std::vector< std::vector<int> > & array, int s);
 
-/* ワーシャるフロイド
+/* ワーシャルフロイド
  * 計算量 O(n^3)
  *
  * 引数
@@ -55,8 +55,8 @@ void dijkstra(std::vector< std::vector<int> > & cost, std::vector<int> & d, bool
  * 計算量 O(|E||V|)
  */
 struct edge {int from, to, cost;};
-void bellman_ford(std::vector<edge> es, std::vector<int>d, int E, int V, int s) {
-  for(int i=0;i<V;i++) d[i] = INF;
+void bellman_ford(std::vector<edge> & es, std::vector<int> & d, int E, int V, int s) {
+  for(int i=0;i<d.size();i++) d[i] = INF;
   d[s] = 0;
   while(true) {
     bool update = false;
@@ -71,9 +71,24 @@ void bellman_ford(std::vector<edge> es, std::vector<int>d, int E, int V, int s) 
   }
 }
 
-/* sample
- */
-void hello(){
-  std::cout << "hello" << std::endl;
+  /* ベルマンフォードによる負閉路の検出
+   *
+   *
+   */
+bool find_negative_loop(std::vector<edge> & es, std::vector<int> & d, int E, int V) {
+  for(int i=0;i<d.size();i++) d[i] = 0;
+
+  for(int i=0;i<V;i++) {
+    for(int j=0;j<E;j++) {
+      edge e = es[j];
+      if(d[e.to] > d[e.from] + e.cost) {
+        d[e.to] = d[e.from] + e.cost;
+
+        // n回目にも更新があるなら負の閉路が存在する
+        if(i == V - 1) return true;
+      }
+    }
+  }
+  return false;
 }
 
